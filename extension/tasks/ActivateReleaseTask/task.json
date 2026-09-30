@@ -31,6 +31,13 @@
       "helpMarkDown": "The release ID to activate. Defaults to the variable set by previous tasks."
     },
     {
+      "name": "environment",
+      "type": "string",
+      "label": "Environment",
+      "required": true,
+      "helpMarkDown": "Target environment to activate (for example Production or Staging). Sent as the environment query parameter."
+    },
+    {
       "name": "waitForGates",
       "type": "boolean",
       "label": "Wait for Gates",
@@ -58,7 +65,7 @@
     }
   ],
   "execution": {
-    "Node16": {
+    "Node20_1": {
       "target": "index.js"
     }
   }

@@ -1,10 +1,34 @@
 # Toggly Feature Flags for Azure DevOps
 
-Run a **pinned** [Toggly CLI](https://docs.toggly.io/sdks/cli) release in Azure Pipelines. The extension ships one task, `TogglyCLI@1`, which downloads the matching `cli-v*` asset, verifies `SHA256SUMS`, and executes the arguments you supply.
+Manage feature flags and releases from Azure Pipelines with typed tasks (service connection, output variables, build summary, gate polling, and rollback) plus an optional `TogglyCLI@1` escape hatch for pinned CLI commands.
 
-The task does not call the Toggly HTTP API. Authentication uses client credentials mapped to `TOGGLY_CLIENT_ID` and `TOGGLY_CLIENT_SECRET`.
+## Typed pipeline tasks
+
+| Task | Purpose |
+| --- | --- |
+| `TogglyCreateRelease@1` | Create a release |
+| `TogglyAssociateBuild@1` | Associate the current build with a release |
+| `TogglyCreateFeature@1` | Create a feature flag |
+| `TogglyUpdateFeature@1` | Update feature metadata |
+| `TogglyUpdateFeatureEnv@1` | Enable, disable, or configure filters per environment |
+| `TogglyActivateRelease@1` | Activate a release (requires `environment`) |
+| `TogglyRollbackRelease@1` | Roll back a release (requires `environment`) |
+
+Configure a **Toggly Feature Flags** service connection (OAuth2 client credentials). Default API URL: `https://app.toggly.io/api`.
+
+```yaml
+- task: TogglyActivateRelease@1
+  inputs:
+    connectedService: 'Toggly-Production'
+    releaseId: '$(Toggly.ReleaseId)'
+    environment: 'Production'
+```
+
+See [Azure DevOps Integration](https://docs.toggly.io/integrations/azure-devops) for full examples.
 
 ## Task: TogglyCLI@1
+
+Use the CLI task when you need a pinned `toggly-cli` binary for commands outside the typed tasks.
 
 | Input | Required | Notes |
 | --- | --- | --- |
@@ -19,48 +43,7 @@ Agents need Python 3 (`python3` or `python`) on `PATH`.
 
 ## Secrets
 
-Store credentials as secret pipeline variables and pass them into the task. Never put client secrets in `args`.
-
-```yaml
-variables:
-  TOGGLY_CLIENT_ID: $(TOGGLY_CLIENT_ID)
-  TOGGLY_CLIENT_SECRET: $(TOGGLY_CLIENT_SECRET)
-```
-
-## Recipe 1: Enable a flag after deploy
-
-```yaml
-- task: TogglyCLI@1
-  inputs:
-    version: "0.2.1"
-    clientId: $(TOGGLY_CLIENT_ID)
-    clientSecret: $(TOGGLY_CLIENT_SECRET)
-    args: >-
-      update-feature-environment
-      --application-id my-app
-      --environment Production
-      --feature-key my-feature
-      --enable
-```
-
-Use `--disable` instead of `--enable` to turn the feature off.
-
-## Recipe 2: Create a release
-
-```yaml
-- task: TogglyCLI@1
-  inputs:
-    version: "0.2.1"
-    clientId: $(TOGGLY_CLIENT_ID)
-    clientSecret: $(TOGGLY_CLIENT_SECRET)
-    args: >-
-      create-release
-      --application-id my-app
-      --name "Build $(Build.BuildNumber)"
-      --release-notes "Shipped from $(Build.SourceBranchName)"
-```
-
-## Recipe 3: Associate the build
+Store credentials as secret pipeline variables and pass them into service connections or CLI task inputs. Never put client secrets in `args`.
 
 ```yaml
 - task: TogglyCLI@1
@@ -80,8 +63,6 @@ Use `--disable` instead of `--enable` to turn the feature off.
       --build-number $(Build.BuildNumber)
 ```
 
-## Learn more
+## Documentation
 
-- [Azure DevOps integration docs](https://docs.toggly.io/integrations/azure-devops)
-- [Toggly CLI reference](https://docs.toggly.io/sdks/cli)
-- [Support](https://toggly.io/support)
+Full guide: [docs.toggly.io/integrations/azure-devops](https://docs.toggly.io/integrations/azure-devops)

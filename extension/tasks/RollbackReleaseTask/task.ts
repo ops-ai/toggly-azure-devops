@@ -1,6 +1,6 @@
 import * as tl from 'azure-pipelines-task-lib/task';
 import { getTogglyConfig, validateServiceConnection } from '../common/service-connection';
-import { TogglyApiClient } from '../common/toggly-api';
+import { TogglyApiClient, requireEnvironment } from '../common/toggly-api';
 import { logSection, formatError } from '../common/utils';
 import { addReleaseSummary } from '../common/build-summary';
 
@@ -11,13 +11,18 @@ async function run(): Promise<void> {
     // Get inputs
     const connectedService = tl.getInput('connectedService', true)!;
     const releaseId = tl.getInput('releaseId', false) || tl.getVariable('Toggly.ReleaseId');
+    const environment = tl.getInput('environment', true);
     const reason = tl.getInput('reason', false);
 
     if (!releaseId) {
       throw new Error('Release ID is required. Either provide it explicitly or ensure a previous task has set Toggly.ReleaseId variable.');
     }
 
+    // Fail before any HTTP when environment is missing/blank
+    const resolvedEnvironment = requireEnvironment(environment);
+
     console.log(`Release ID: ${releaseId}`);
+    console.log(`Environment: ${resolvedEnvironment}`);
     
     if (reason) {
       console.log(`Reason: ${reason}`);
@@ -44,7 +49,7 @@ async function run(): Promise<void> {
     // Rollback release
     console.log('');
     console.log('Rolling back release...');
-    const release = await apiClient.rollbackRelease(releaseId);
+    const release = await apiClient.rollbackRelease(releaseId, resolvedEnvironment);
 
     console.log('');
     console.log('✓ Release rolled back successfully!');
@@ -80,4 +85,3 @@ async function run(): Promise<void> {
 }
 
 run();
-

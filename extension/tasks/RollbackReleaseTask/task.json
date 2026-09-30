@@ -31,6 +31,13 @@
       "helpMarkDown": "The release ID to rollback. Defaults to the variable set by previous tasks."
     },
     {
+      "name": "environment",
+      "type": "string",
+      "label": "Environment",
+      "required": true,
+      "helpMarkDown": "Target environment to roll back (for example Production or Staging). Sent as the environment query parameter."
+    },
+    {
       "name": "reason",
       "type": "string",
       "label": "Rollback Reason",
@@ -39,7 +46,7 @@
     }
   ],
   "execution": {
-    "Node16": {
+    "Node20_1": {
       "target": "index.js"
     }
   }

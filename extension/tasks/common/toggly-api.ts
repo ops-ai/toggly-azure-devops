@@ -14,6 +14,24 @@ import {
   ReleaseDetails
 } from './types';
 
+/**
+ * Ensure request paths are under /v2 without double-prefixing.
+ */
+export function withV2Prefix(path: string): string {
+  if (path.startsWith('/v2/') || path === '/v2') {
+    return path;
+  }
+  return path.startsWith('/') ? `/v2${path}` : `/v2/${path}`;
+}
+
+export function requireEnvironment(environment: string | undefined | null): string {
+  const trimmed = (environment ?? '').trim();
+  if (!trimmed) {
+    throw new Error('Environment is required');
+  }
+  return trimmed;
+}
+
 export class TogglyApiClient {
   private httpClient: AxiosInstance;
   private config: TogglyConfig;
@@ -27,7 +45,7 @@ export class TogglyApiClient {
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'Toggly-AzureDevOps-Extension/1.0.0'
+        'User-Agent': 'Toggly-AzureDevOps-Extension/2.1.0'
       }
     });
 
@@ -98,7 +116,7 @@ export class TogglyApiClient {
     try {
       const response = await this.httpClient.request<T>({
         method,
-        url,
+        url: withV2Prefix(url),
         data,
         headers: {
           'Authorization': `Bearer ${token}`
@@ -195,17 +213,25 @@ export class TogglyApiClient {
   /**
    * Activate a release
    */
-  async activateRelease(releaseId: string): Promise<ReleaseDetails> {
-    tl.debug(`Activating release: ${releaseId}`);
-    return await this.makeRequest<ReleaseDetails>('POST', `/releases/${releaseId}/activate`);
+  async activateRelease(releaseId: string, environment: string): Promise<ReleaseDetails> {
+    const env = requireEnvironment(environment);
+    tl.debug(`Activating release: ${releaseId} in ${env}`);
+    return await this.makeRequest<ReleaseDetails>(
+      'POST',
+      `/releases/${releaseId}/activate?environment=${encodeURIComponent(env)}`
+    );
   }
 
   /**
    * Rollback a release
    */
-  async rollbackRelease(releaseId: string): Promise<ReleaseDetails> {
-    tl.debug(`Rolling back release: ${releaseId}`);
-    return await this.makeRequest<ReleaseDetails>('POST', `/releases/${releaseId}/rollback`);
+  async rollbackRelease(releaseId: string, environment: string): Promise<ReleaseDetails> {
+    const env = requireEnvironment(environment);
+    tl.debug(`Rolling back release: ${releaseId} in ${env}`);
+    return await this.makeRequest<ReleaseDetails>(
+      'POST',
+      `/releases/${releaseId}/rollback?environment=${encodeURIComponent(env)}`
+    );
   }
 
   /**
@@ -231,4 +257,3 @@ export class TogglyApiClient {
     );
   }
 }
-

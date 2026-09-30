@@ -1,6 +1,6 @@
 import * as tl from 'azure-pipelines-task-lib/task';
 import { getTogglyConfig, validateServiceConnection } from '../common/service-connection';
-import { TogglyApiClient } from '../common/toggly-api';
+import { TogglyApiClient, requireEnvironment } from '../common/toggly-api';
 import { logSection, formatError, wait } from '../common/utils';
 import { addReleaseSummary, logGateStatus } from '../common/build-summary';
 
@@ -11,6 +11,7 @@ async function run(): Promise<void> {
     // Get inputs
     const connectedService = tl.getInput('connectedService', true)!;
     const releaseId = tl.getInput('releaseId', false) || tl.getVariable('Toggly.ReleaseId');
+    const environment = tl.getInput('environment', true);
     const waitForGates = tl.getBoolInput('waitForGates', false);
     const gateTimeoutStr = tl.getInput('gateTimeout', false) || '300';
     const gatePollIntervalStr = tl.getInput('gatePollInterval', false) || '10';
@@ -19,10 +20,14 @@ async function run(): Promise<void> {
       throw new Error('Release ID is required. Either provide it explicitly or ensure a previous task has set Toggly.ReleaseId variable.');
     }
 
+    // Fail before any HTTP when environment is missing/blank
+    const resolvedEnvironment = requireEnvironment(environment);
+
     const gateTimeout = parseInt(gateTimeoutStr, 10);
     const gatePollInterval = parseInt(gatePollIntervalStr, 10);
 
     console.log(`Release ID: ${releaseId}`);
+    console.log(`Environment: ${resolvedEnvironment}`);
     console.log(`Wait for Gates: ${waitForGates}`);
 
     // Get Toggly configuration from service connection
@@ -66,7 +71,7 @@ async function run(): Promise<void> {
     // Activate release
     console.log('');
     console.log('Activating release...');
-    const release = await apiClient.activateRelease(releaseId);
+    const release = await apiClient.activateRelease(releaseId, resolvedEnvironment);
 
     console.log('');
     console.log('✓ Release activated successfully!');
@@ -90,4 +95,3 @@ async function run(): Promise<void> {
 }
 
 run();
-

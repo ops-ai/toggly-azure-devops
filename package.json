@@ -1,7 +1,7 @@
 {
   "name": "toggly-azure-devops-extension",
-  "version": "2.0.0",
-  "description": "Azure DevOps extension that runs a pinned Toggly CLI in pipelines",
+  "version": "2.1.0",
+  "description": "Azure DevOps extension for Toggly feature flags, releases, and CLI",
   "main": "index.js",
   "scripts": {
     "build": "tsc && npm run webpack",

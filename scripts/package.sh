@@ -10,32 +10,74 @@ echo ""
 echo "Building extension..."
 ./scripts/build.sh
 
-TASK="TogglyCLI"
 STAGE="package"
+REQUIRED_TASKS=(
+  CreateReleaseTask
+  AssociateBuildTask
+  CreateFeatureTask
+  UpdateFeatureTask
+  UpdateFeatureEnvTask
+  ActivateReleaseTask
+  RollbackReleaseTask
+  TogglyCLI
+)
 
 echo ""
-echo "Staging $TASK into ./$STAGE ..."
+echo "Staging tasks into ./$STAGE ..."
 rm -rf "$STAGE"
-mkdir -p "$STAGE/tasks/$TASK" "$STAGE/images"
+mkdir -p "$STAGE/tasks" "$STAGE/images"
 
-cp "dist/tasks/$TASK/index.js" "$STAGE/tasks/$TASK/index.js"
-cp "extension/tasks/$TASK/task.json" "$STAGE/tasks/$TASK/"
-cp "extension/tasks/$TASK/package.json" "$STAGE/tasks/$TASK/"
-cp "extension/tasks/$TASK/toggly_action.py" "$STAGE/tasks/$TASK/"
-cp "extension/tasks/$TASK/toggly_action.py.sha256" "$STAGE/tasks/$TASK/"
+# Discover every task that has a task.json under extension/tasks
+while IFS= read -r task_json; do
+  TASK="$(basename "$(dirname "$task_json")")"
+  echo "  Staging $TASK"
+  mkdir -p "$STAGE/tasks/$TASK"
+
+  if [[ ! -f "dist/tasks/$TASK/index.js" ]]; then
+    echo "ERROR: missing webpack output dist/tasks/$TASK/index.js" >&2
+    exit 1
+  fi
+
+  cp "dist/tasks/$TASK/index.js" "$STAGE/tasks/$TASK/index.js"
+  cp "extension/tasks/$TASK/task.json" "$STAGE/tasks/$TASK/"
+  cp "extension/tasks/$TASK/package.json" "$STAGE/tasks/$TASK/"
+
+  if [[ "$TASK" == "TogglyCLI" ]]; then
+    cp "extension/tasks/$TASK/toggly_action.py" "$STAGE/tasks/$TASK/"
+    cp "extension/tasks/$TASK/toggly_action.py.sha256" "$STAGE/tasks/$TASK/"
+  fi
+
+  echo "    Installing task runtime dependencies..."
+  (
+    cd "$STAGE/tasks/$TASK"
+    npm install --omit=dev --no-package-lock
+  )
+done < <(find extension/tasks -mindepth 2 -maxdepth 2 -name task.json | sort)
+
 cp "extension/overview.md" "$STAGE/overview.md"
 cp "extension/vss-extension.json" "$STAGE/vss-extension.json"
 cp "extension/images/extension-icon.png" "$STAGE/images/"
 
-echo "  Installing task runtime dependencies..."
-(
-  cd "$STAGE/tasks/$TASK"
-  npm install --omit=dev --no-package-lock
-)
+# Guard: stage must contain all seven historical tasks and TogglyCLI
+MISSING=0
+for TASK in "${REQUIRED_TASKS[@]}"; do
+  if [[ ! -f "$STAGE/tasks/$TASK/task.json" ]] || [[ ! -f "$STAGE/tasks/$TASK/index.js" ]]; then
+    echo "ERROR: package stage missing required task: $TASK" >&2
+    MISSING=1
+  fi
+done
+if [[ "$MISSING" -ne 0 ]]; then
+  exit 1
+fi
 
-# Guard: packaged tree must not include retired tasks or the service endpoint
-if find "$STAGE" -iname '*CreateRelease*' -o -iname '*ActivateRelease*' -o -iname '*service-endpoint*' | grep -q .; then
-  echo "ERROR: package stage contains retired task or service-endpoint paths" >&2
+if [[ ! -f "$STAGE/tasks/TogglyCLI/toggly_action.py" ]] || [[ ! -f "$STAGE/tasks/TogglyCLI/toggly_action.py.sha256" ]]; then
+  echo "ERROR: TogglyCLI extras (toggly_action.py / sha256) missing from package stage" >&2
+  exit 1
+fi
+
+# Confirm service-endpoint contribution is present in the staged manifest
+if ! grep -q 'toggly-service-endpoint' "$STAGE/vss-extension.json"; then
+  echo "ERROR: staged manifest is missing toggly-service-endpoint contribution" >&2
   exit 1
 fi
 
