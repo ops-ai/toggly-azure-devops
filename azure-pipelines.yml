@@ -1,120 +1,137 @@
+# Build and publish the Toggly Azure DevOps Marketplace extension.
+# Repo: ops-ai/toggly-azure-devops (standalone; YAML paths are repo-root relative).
+#
+# Required pipeline variables (secret unless noted):
+#   AzureDevOpsMarketplacePAT  - PAT with Marketplace (Manage)
+#   DevOpsOrganization          - ADO org slug for private --share-with (plain text)
+
+parameters:
+  - name: publishPrivate
+    displayName: 'Share privately with DevOpsOrganization'
+    type: boolean
+    default: true
+  - name: publishPublic
+    displayName: 'Publish publicly to the Marketplace'
+    type: boolean
+    default: false
+
 trigger:
   branches:
     include:
       - main
-      - develop
-  paths:
-    include:
-      - Toggly.AzureDevOps/**
 
 pr:
   branches:
     include:
       - main
-      - develop
-  paths:
-    include:
-      - Toggly.AzureDevOps/**
 
 pool:
-  name: 'Local Pool'
+  vmImage: 'ubuntu-latest'
 
 variables:
-  extensionVersion: '1.0.$(Build.BuildId)'
   extensionId: 'toggly-feature-flags'
   publisherId: 'toggly'
+  nodeVersion: '20.x'
 
 stages:
   - stage: Build
     displayName: 'Build Extension'
     jobs:
       - job: BuildExtension
-        displayName: 'Build and Package Extension'
+        displayName: 'Test and package VSIX'
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '18.x'
+              versionSpec: $(nodeVersion)
             displayName: 'Install Node.js'
 
-          - script: |
-              cd Toggly.AzureDevOps
-              npm install
-            displayName: 'Install Dependencies'
+          - script: npm ci
+            displayName: 'Install dependencies'
+
+          - script: npm test
+            displayName: 'Run unit tests'
 
           - script: |
-              cd Toggly.AzureDevOps
-              npm run build
-            displayName: 'Build TypeScript'
-
-          - script: |
-              cd Toggly.AzureDevOps
-              # Update version in manifest
-              sed -i "s/\"version\": \"1.0.0\"/\"version\": \"$(extensionVersion)\"/" extension/vss-extension.json
-              
-              # Install tfx-cli
-              npm install -g tfx-cli
-              
-              # Package extension
-              tfx extension create --manifest-globs extension/vss-extension.json --output-path $(Build.ArtifactStagingDirectory)
-            displayName: 'Package Extension'
+              set -euo pipefail
+              chmod +x scripts/package.sh
+              # package.sh looks for tfx on PATH; prefer the local tfx-cli
+              export PATH="$(pwd)/node_modules/.bin:$PATH"
+              ./scripts/package.sh
+            displayName: 'Package extension (scripts/package.sh)'
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              PathtoPublish: 'output'
               ArtifactName: 'extension'
               publishLocation: 'Container'
-            displayName: 'Publish Artifact'
+            displayName: 'Publish VSIX artifact'
 
-  - stage: PublishDev
-    displayName: 'Publish to Dev'
+  - stage: PublishPrivate
+    displayName: 'Publish private (shared)'
     dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq('${{ parameters.publishPrivate }}', 'true'))
     jobs:
-      - deployment: PublishDevExtension
-        displayName: 'Publish Extension (Dev)'
-        environment: 'AzureDevOps-Dev'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - download: current
-                  artifact: extension
+      - job: PublishPrivateExtension
+        displayName: 'Share VSIX with DevOpsOrganization'
+        steps:
+          - download: current
+            artifact: extension
 
-                - script: |
-                    npm install -g tfx-cli
-                    
-                    # Publish as private/shared extension for testing
-                    tfx extension publish \
-                      --manifest-globs $(Pipeline.Workspace)/extension/*.vsix \
-                      --share-with $(DevOpsOrganization) \
-                      --token $(AzureDevOpsMarketplacePAT)
-                  displayName: 'Publish to Marketplace (Dev)'
-                  env:
-                    AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(nodeVersion)
+            displayName: 'Install Node.js'
 
-  - stage: PublishProduction
-    displayName: 'Publish to Production'
+          - script: |
+              set -euo pipefail
+              if [ -z "${AzureDevOpsMarketplacePAT:-}" ]; then
+                echo "##vso[task.logissue type=error]AzureDevOpsMarketplacePAT pipeline variable is not set"
+                exit 1
+              fi
+              if [ -z "${DevOpsOrganization:-}" ]; then
+                echo "##vso[task.logissue type=error]DevOpsOrganization pipeline variable is not set"
+                exit 1
+              fi
+              npm install -g tfx-cli@0.22.6
+              VSIX=$(ls "$(Pipeline.Workspace)/extension"/*.vsix | head -n 1)
+              echo "Publishing privately: $VSIX → org ${DevOpsOrganization}"
+              tfx extension publish \
+                --vsix "$VSIX" \
+                --share-with "${DevOpsOrganization}" \
+                --token "${AzureDevOpsMarketplacePAT}"
+            displayName: 'tfx extension publish --share-with'
+            env:
+              AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)
+              DevOpsOrganization: $(DevOpsOrganization)
+
+  - stage: PublishPublic
+    displayName: 'Publish public'
     dependsOn: Build
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq('${{ parameters.publishPublic }}', 'true'))
     jobs:
-      - deployment: PublishProdExtension
-        displayName: 'Publish Extension (Production)'
-        environment: 'AzureDevOps-Production'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - download: current
-                  artifact: extension
+      - job: PublishPublicExtension
+        displayName: 'Publish VSIX to Marketplace'
+        steps:
+          - download: current
+            artifact: extension
 
-                - script: |
-                    npm install -g tfx-cli
-                    
-                    # Publish public extension
-                    tfx extension publish \
-                      --manifest-globs $(Pipeline.Workspace)/extension/*.vsix \
-                      --token $(AzureDevOpsMarketplacePAT)
-                  displayName: 'Publish to Marketplace (Production)'
-                  env:
-                    AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(nodeVersion)
+            displayName: 'Install Node.js'
 
+          - script: |
+              set -euo pipefail
+              if [ -z "${AzureDevOpsMarketplacePAT:-}" ]; then
+                echo "##vso[task.logissue type=error]AzureDevOpsMarketplacePAT pipeline variable is not set"
+                exit 1
+              fi
+              npm install -g tfx-cli@0.22.6
+              VSIX=$(ls "$(Pipeline.Workspace)/extension"/*.vsix | head -n 1)
+              echo "Publishing publicly: $VSIX"
+              tfx extension publish \
+                --vsix "$VSIX" \
+                --token "${AzureDevOpsMarketplacePAT}"
+            displayName: 'tfx extension publish (public)'
+            env:
+              AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)

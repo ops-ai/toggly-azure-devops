@@ -85,9 +85,18 @@ mkdir -p output
 
 echo ""
 echo "Creating VSIX package..."
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+if [[ -x "$ROOT/node_modules/.bin/tfx" ]]; then
+  TFX="$ROOT/node_modules/.bin/tfx"
+elif command -v tfx >/dev/null 2>&1; then
+  TFX="$(command -v tfx)"
+else
+  echo "ERROR: tfx not found. Run npm install (tfx-cli) first." >&2
+  exit 1
+fi
 (
   cd "$STAGE"
-  tfx extension create --manifest-globs vss-extension.json --output-path ../output
+  "$TFX" extension create --manifest-globs vss-extension.json --output-path ../output
 )
 
 VSIX_FILE=$(ls output/*.vsix | head -n 1)
