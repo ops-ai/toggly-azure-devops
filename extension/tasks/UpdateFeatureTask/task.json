@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "d4e5f6a7-4567-89ab-cdef-012345678901",
+  "name": "TogglyUpdateFeature",
+  "friendlyName": "Toggly - Update Feature",
+  "description": "Update an existing feature flag in Toggly",
+  "helpMarkDown": "Updates metadata for an existing feature flag. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
+  "category": "Utility",
+  "visibility": ["Build", "Release"],
+  "author": "Toggly",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Update Feature: $(featureKey)",
+  "inputs": [
+    {
+      "name": "connectedService",
+      "type": "connectedService:toggly",
+      "label": "Toggly Service Connection",
+      "required": true,
+      "helpMarkDown": "Select a Toggly service connection"
+    },
+    {
+      "name": "applicationId",
+      "type": "string",
+      "label": "Application ID",
+      "required": true,
+      "helpMarkDown": "The Toggly application ID"
+    },
+    {
+      "name": "featureKey",
+      "type": "string",
+      "label": "Feature Key",
+      "required": true,
+      "helpMarkDown": "The key of the feature to update"
+    },
+    {
+      "name": "featureName",
+      "type": "string",
+      "label": "Feature Name",
+      "required": false,
+      "helpMarkDown": "New display name for the feature (leave empty to keep current)"
+    },
+    {
+      "name": "description",
+      "type": "multiLine",
+      "label": "Description",
+      "required": false,
+      "helpMarkDown": "New description (leave empty to keep current)",
+      "properties": {
+        "resizable": true,
+        "rows": "4"
+      }
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "label": "Category",
+      "required": false,
+      "helpMarkDown": "New category (leave empty to keep current)"
+    },
+    {
+      "name": "tags",
+      "type": "string",
+      "label": "Tags",
+      "required": false,
+      "helpMarkDown": "New comma-separated list of tags (leave empty to keep current)"
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "index.js"
+    }
+  }
+}
+

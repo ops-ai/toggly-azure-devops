@@ -1,0 +1,12 @@
+{
+  "name": "toggly-associate-build-task",
+  "version": "1.0.0",
+  "description": "Azure DevOps task to associate build with Toggly release",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "azure-pipelines-task-lib": "^4.10.0",
+    "axios": "^1.6.5"
+  }
+}
+

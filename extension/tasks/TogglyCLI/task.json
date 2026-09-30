@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "abd334d1-daa7-4f42-8565-1c987929ecfa",
+  "name": "TogglyCLI",
+  "friendlyName": "Toggly CLI",
+  "description": "Install a pinned Toggly CLI release and run caller-supplied arguments",
+  "helpMarkDown": "Downloads a pinned `cli-v*` binary, verifies SHA256SUMS, and runs your arguments. Do not put secrets in `args`. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
+  "category": "Utility",
+  "visibility": ["Build", "Release"],
+  "author": "Toggly",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Toggly CLI $(version)",
+  "inputs": [
+    {
+      "name": "version",
+      "type": "string",
+      "label": "CLI version",
+      "required": true,
+      "helpMarkDown": "Pinned CLI release without the `cli-v` prefix, for example `0.2.1`. Must be MAJOR.MINOR.PATCH. Do not use `latest`."
+    },
+    {
+      "name": "args",
+      "type": "multiLine",
+      "label": "CLI arguments",
+      "required": true,
+      "helpMarkDown": "Arguments passed to toggly-cli. Quote like a shell. Do not put secrets here — use Client ID / Client Secret inputs instead.",
+      "properties": {
+        "resizable": true,
+        "rows": "6"
+      }
+    },
+    {
+      "name": "clientId",
+      "type": "string",
+      "label": "Client ID",
+      "required": true,
+      "helpMarkDown": "OAuth2 client ID. Mapped to TOGGLY_CLIENT_ID."
+    },
+    {
+      "name": "clientSecret",
+      "type": "string",
+      "label": "Client Secret",
+      "required": true,
+      "helpMarkDown": "OAuth2 client secret. Mapped to TOGGLY_CLIENT_SECRET. Pass a secret pipeline variable (for example `$(TOGGLY_CLIENT_SECRET)`)."
+    },
+    {
+      "name": "baseUrl",
+      "type": "string",
+      "label": "Base URL",
+      "required": false,
+      "helpMarkDown": "Optional API base URL override (TOGGLY_BASE_URL)."
+    },
+    {
+      "name": "authority",
+      "type": "string",
+      "label": "Authority",
+      "required": false,
+      "helpMarkDown": "Optional auth authority override (TOGGLY_AUTHORITY)."
+    }
+  ],
+  "execution": {
+    "Node20_1": {
+      "target": "index.js"
+    }
+  }
+}

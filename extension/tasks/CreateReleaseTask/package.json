@@ -1,0 +1,12 @@
+{
+  "name": "toggly-create-release-task",
+  "version": "1.0.0",
+  "description": "Azure DevOps task to create a Toggly release",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "azure-pipelines-task-lib": "^4.10.0",
+    "axios": "^1.6.5"
+  }
+}
+

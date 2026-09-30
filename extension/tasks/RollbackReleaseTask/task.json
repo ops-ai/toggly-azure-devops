@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "a7b8c9d0-789a-bcde-f012-345678901234",
+  "name": "TogglyRollbackRelease",
+  "friendlyName": "Toggly - Rollback Release",
+  "description": "Rollback a Toggly release to restore previous feature flag states",
+  "helpMarkDown": "Rolls back a release, restoring all feature flags to their previous state. Typically used in failure scenarios. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
+  "category": "Deploy",
+  "visibility": ["Build", "Release"],
+  "author": "Toggly",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Rollback Toggly Release",
+  "inputs": [
+    {
+      "name": "connectedService",
+      "type": "connectedService:toggly",
+      "label": "Toggly Service Connection",
+      "required": true,
+      "helpMarkDown": "Select a Toggly service connection"
+    },
+    {
+      "name": "releaseId",
+      "type": "string",
+      "label": "Release ID",
+      "required": false,
+      "defaultValue": "$(Toggly.ReleaseId)",
+      "helpMarkDown": "The release ID to rollback. Defaults to the variable set by previous tasks."
+    },
+    {
+      "name": "reason",
+      "type": "string",
+      "label": "Rollback Reason",
+      "required": false,
+      "helpMarkDown": "Optional reason for the rollback (for audit purposes)"
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "index.js"
+    }
+  }
+}
+

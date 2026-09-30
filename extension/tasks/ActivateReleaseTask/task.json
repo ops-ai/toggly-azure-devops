@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "f6a7b8c9-6789-abcd-ef01-234567890123",
+  "name": "TogglyActivateRelease",
+  "friendlyName": "Toggly - Activate Release",
+  "description": "Activate a Toggly release and optionally wait for gates to pass",
+  "helpMarkDown": "Activates a release, applying all feature flag changes. Can wait for gates to pass before activation. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
+  "category": "Deploy",
+  "visibility": ["Build", "Release"],
+  "author": "Toggly",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Activate Toggly Release",
+  "inputs": [
+    {
+      "name": "connectedService",
+      "type": "connectedService:toggly",
+      "label": "Toggly Service Connection",
+      "required": true,
+      "helpMarkDown": "Select a Toggly service connection"
+    },
+    {
+      "name": "releaseId",
+      "type": "string",
+      "label": "Release ID",
+      "required": false,
+      "defaultValue": "$(Toggly.ReleaseId)",
+      "helpMarkDown": "The release ID to activate. Defaults to the variable set by previous tasks."
+    },
+    {
+      "name": "waitForGates",
+      "type": "boolean",
+      "label": "Wait for Gates",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Poll gate status and wait for all gates to pass before activating"
+    },
+    {
+      "name": "gateTimeout",
+      "type": "string",
+      "label": "Gate Timeout (seconds)",
+      "required": false,
+      "defaultValue": "300",
+      "visibleRule": "waitForGates = true",
+      "helpMarkDown": "Maximum time to wait for gates (default: 300 seconds)"
+    },
+    {
+      "name": "gatePollInterval",
+      "type": "string",
+      "label": "Gate Poll Interval (seconds)",
+      "required": false,
+      "defaultValue": "10",
+      "visibleRule": "waitForGates = true",
+      "helpMarkDown": "Time between gate status checks (default: 10 seconds)"
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "index.js"
+    }
+  }
+}
+

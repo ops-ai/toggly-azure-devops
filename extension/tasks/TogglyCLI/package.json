@@ -1,0 +1,10 @@
+{
+  "name": "toggly-cli-task",
+  "version": "1.0.0",
+  "description": "Azure DevOps task to install and run a pinned Toggly CLI",
+  "main": "index.js",
+  "scripts": {},
+  "dependencies": {
+    "azure-pipelines-task-lib": "^4.10.0"
+  }
+}

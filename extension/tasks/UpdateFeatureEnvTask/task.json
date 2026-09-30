@@ -1,0 +1,89 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "e5f6a7b8-5678-9abc-def0-123456789012",
+  "name": "TogglyUpdateFeatureEnv",
+  "friendlyName": "Toggly - Update Feature Environment",
+  "description": "Enable, disable, or configure a feature flag on a specific environment",
+  "helpMarkDown": "Updates feature flag configuration for a specific environment. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
+  "category": "Deploy",
+  "visibility": ["Build", "Release"],
+  "author": "Toggly",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Update Feature $(featureKey) on $(environment)",
+  "inputs": [
+    {
+      "name": "connectedService",
+      "type": "connectedService:toggly",
+      "label": "Toggly Service Connection",
+      "required": true,
+      "helpMarkDown": "Select a Toggly service connection"
+    },
+    {
+      "name": "applicationId",
+      "type": "string",
+      "label": "Application ID",
+      "required": true,
+      "helpMarkDown": "The Toggly application ID"
+    },
+    {
+      "name": "environment",
+      "type": "pickList",
+      "label": "Environment",
+      "required": true,
+      "defaultValue": "Production",
+      "options": {
+        "Development": "Development",
+        "Staging": "Staging",
+        "Production": "Production",
+        "QA": "QA",
+        "UAT": "UAT"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "helpMarkDown": "Target environment"
+    },
+    {
+      "name": "featureKey",
+      "type": "string",
+      "label": "Feature Key",
+      "required": true,
+      "helpMarkDown": "The key of the feature to configure"
+    },
+    {
+      "name": "action",
+      "type": "radio",
+      "label": "Action",
+      "required": true,
+      "defaultValue": "enable",
+      "options": {
+        "enable": "Enable (AlwaysOn)",
+        "disable": "Disable (remove all filters)",
+        "custom": "Custom Filters (JSON)"
+      },
+      "helpMarkDown": "Choose how to configure the feature"
+    },
+    {
+      "name": "filters",
+      "type": "multiLine",
+      "label": "Custom Filters (JSON)",
+      "required": false,
+      "visibleRule": "action = custom",
+      "helpMarkDown": "JSON array of filter objects. Example: [{\"name\":\"TargetingFilter\",\"parameters\":{\"Audience\":\"beta-users\"}}]",
+      "properties": {
+        "resizable": true,
+        "rows": "6"
+      }
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "index.js"
+    }
+  }
+}
+

@@ -1,0 +1,120 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - Toggly.AzureDevOps/**
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - Toggly.AzureDevOps/**
+
+pool:
+  name: 'Local Pool'
+
+variables:
+  extensionVersion: '1.0.$(Build.BuildId)'
+  extensionId: 'toggly-feature-flags'
+  publisherId: 'toggly'
+
+stages:
+  - stage: Build
+    displayName: 'Build Extension'
+    jobs:
+      - job: BuildExtension
+        displayName: 'Build and Package Extension'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              cd Toggly.AzureDevOps
+              npm install
+            displayName: 'Install Dependencies'
+
+          - script: |
+              cd Toggly.AzureDevOps
+              npm run build
+            displayName: 'Build TypeScript'
+
+          - script: |
+              cd Toggly.AzureDevOps
+              # Update version in manifest
+              sed -i "s/\"version\": \"1.0.0\"/\"version\": \"$(extensionVersion)\"/" extension/vss-extension.json
+              
+              # Install tfx-cli
+              npm install -g tfx-cli
+              
+              # Package extension
+              tfx extension create --manifest-globs extension/vss-extension.json --output-path $(Build.ArtifactStagingDirectory)
+            displayName: 'Package Extension'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'extension'
+              publishLocation: 'Container'
+            displayName: 'Publish Artifact'
+
+  - stage: PublishDev
+    displayName: 'Publish to Dev'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    jobs:
+      - deployment: PublishDevExtension
+        displayName: 'Publish Extension (Dev)'
+        environment: 'AzureDevOps-Dev'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: extension
+
+                - script: |
+                    npm install -g tfx-cli
+                    
+                    # Publish as private/shared extension for testing
+                    tfx extension publish \
+                      --manifest-globs $(Pipeline.Workspace)/extension/*.vsix \
+                      --share-with $(DevOpsOrganization) \
+                      --token $(AzureDevOpsMarketplacePAT)
+                  displayName: 'Publish to Marketplace (Dev)'
+                  env:
+                    AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)
+
+  - stage: PublishProduction
+    displayName: 'Publish to Production'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: PublishProdExtension
+        displayName: 'Publish Extension (Production)'
+        environment: 'AzureDevOps-Production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: extension
+
+                - script: |
+                    npm install -g tfx-cli
+                    
+                    # Publish public extension
+                    tfx extension publish \
+                      --manifest-globs $(Pipeline.Workspace)/extension/*.vsix \
+                      --token $(AzureDevOpsMarketplacePAT)
+                  displayName: 'Publish to Marketplace (Production)'
+                  env:
+                    AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)
+

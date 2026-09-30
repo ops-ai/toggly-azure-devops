@@ -1,0 +1,85 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "b2c3d4e5-2345-6789-abcd-ef0123456789",
+  "name": "TogglyAssociateBuild",
+  "friendlyName": "Toggly - Associate Build",
+  "description": "Associate the current Azure DevOps build with a Toggly release",
+  "helpMarkDown": "Associates the current build with a Toggly release. Can create a new release or find an existing draft release. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
+  "category": "Deploy",
+  "visibility": ["Build", "Release"],
+  "author": "Toggly",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Associate Build with Toggly Release",
+  "inputs": [
+    {
+      "name": "connectedService",
+      "type": "connectedService:toggly",
+      "label": "Toggly Service Connection",
+      "required": true,
+      "helpMarkDown": "Select a Toggly service connection"
+    },
+    {
+      "name": "projectKey",
+      "type": "string",
+      "label": "Project Key / Application ID",
+      "required": true,
+      "helpMarkDown": "The Toggly application ID or project key"
+    },
+    {
+      "name": "environment",
+      "type": "pickList",
+      "label": "Environment",
+      "required": true,
+      "defaultValue": "Production",
+      "options": {
+        "Development": "Development",
+        "Staging": "Staging",
+        "Production": "Production",
+        "QA": "QA",
+        "UAT": "UAT"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "helpMarkDown": "Target environment for the release"
+    },
+    {
+      "name": "mode",
+      "type": "pickList",
+      "label": "Release Mode",
+      "required": true,
+      "defaultValue": "use-latest-draft-or-create",
+      "options": {
+        "use-latest-draft-or-create": "Use latest draft or create new",
+        "create-new": "Always create new release",
+        "use-latest-draft": "Use latest draft only"
+      },
+      "helpMarkDown": "How to find or create the release"
+    },
+    {
+      "name": "releaseTemplateKey",
+      "type": "string",
+      "label": "Release Template Key",
+      "required": false,
+      "helpMarkDown": "Optional: Template key to use when creating new releases"
+    },
+    {
+      "name": "namePattern",
+      "type": "string",
+      "label": "Release Name Pattern",
+      "required": false,
+      "defaultValue": "Release ${branch} - ${buildNumber}",
+      "helpMarkDown": "Pattern for release name. Supports: ${branch}, ${buildNumber}, ${commitSha}"
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "index.js"
+    }
+  }
+}
+

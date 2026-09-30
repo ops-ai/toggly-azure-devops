@@ -1,0 +1,13 @@
+node_modules/
+dist/
+package/
+output/
+*.vsix
+*.log
+.DS_Store
+.env
+coverage/
+*.tsbuildinfo
+/tasks/
+/overview.md
+/images/

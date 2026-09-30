@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "c3d4e5f6-3456-789a-bcde-f01234567890",
+  "name": "TogglyCreateFeature",
+  "friendlyName": "Toggly - Create Feature",
+  "description": "Create a new feature flag in Toggly",
+  "helpMarkDown": "Creates a new feature flag with specified configuration. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
+  "category": "Utility",
+  "visibility": ["Build", "Release"],
+  "author": "Toggly",
+  "version": {
+    "Major": 1,
+    "Minor": 0,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Create Feature: $(featureKey)",
+  "inputs": [
+    {
+      "name": "connectedService",
+      "type": "connectedService:toggly",
+      "label": "Toggly Service Connection",
+      "required": true,
+      "helpMarkDown": "Select a Toggly service connection"
+    },
+    {
+      "name": "applicationId",
+      "type": "string",
+      "label": "Application ID",
+      "required": true,
+      "helpMarkDown": "The Toggly application ID"
+    },
+    {
+      "name": "featureName",
+      "type": "string",
+      "label": "Feature Name",
+      "required": true,
+      "helpMarkDown": "Display name for the feature"
+    },
+    {
+      "name": "featureKey",
+      "type": "string",
+      "label": "Feature Key",
+      "required": true,
+      "helpMarkDown": "Unique key used to reference the feature in code"
+    },
+    {
+      "name": "description",
+      "type": "multiLine",
+      "label": "Description",
+      "required": false,
+      "helpMarkDown": "Optional description (markdown supported)",
+      "properties": {
+        "resizable": true,
+        "rows": "4"
+      }
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "label": "Category",
+      "required": false,
+      "helpMarkDown": "Optional category for organizing features"
+    },
+    {
+      "name": "tags",
+      "type": "string",
+      "label": "Tags",
+      "required": false,
+      "helpMarkDown": "Comma-separated list of tags (e.g., 'frontend, ui, beta')"
+    }
+  ],
+  "execution": {
+    "Node16": {
+      "target": "index.js"
+    }
+  }
+}
+

@@ -1,0 +1,72 @@
+{
+  "manifestVersion": 1,
+  "id": "toggly-feature-flags",
+  "name": "Toggly Feature Flags",
+  "version": "2.0.0",
+  "publisher": "toggly",
+  "description": "Run a pinned Toggly CLI in Azure DevOps pipelines to manage feature flags and releases",
+  "categories": ["Azure Pipelines"],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "tags": [
+    "feature flags",
+    "feature toggles",
+    "deployment",
+    "release management",
+    "progressive delivery",
+    "ci/cd",
+    "cli"
+  ],
+  "icons": {
+    "default": "images/extension-icon.png"
+  },
+  "content": {
+    "details": {
+      "path": "overview.md"
+    }
+  },
+  "links": {
+    "getstarted": {
+      "uri": "https://docs.toggly.io/integrations/azure-devops"
+    },
+    "learn": {
+      "uri": "https://docs.toggly.io"
+    },
+    "support": {
+      "uri": "https://toggly.io/support"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/ops-ai/Toggly.FeatureManagement"
+  },
+  "badges": [
+    {
+      "href": "https://toggly.io",
+      "uri": "https://img.shields.io/badge/Toggly-Feature%20Flags-blue",
+      "description": "Toggly Feature Flags"
+    }
+  ],
+  "contributions": [
+    {
+      "id": "toggly-cli-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": ["ms.vss-distributed-task.tasks"],
+      "properties": {
+        "name": "tasks/TogglyCLI"
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "tasks/TogglyCLI"
+    },
+    {
+      "path": "images",
+      "addressable": true
+    }
+  ]
+}
