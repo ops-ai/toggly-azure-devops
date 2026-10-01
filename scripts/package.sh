@@ -42,6 +42,14 @@ while IFS= read -r task_json; do
   cp "extension/tasks/$TASK/task.json" "$STAGE/tasks/$TASK/"
   cp "extension/tasks/$TASK/package.json" "$STAGE/tasks/$TASK/"
 
+  # Task picker icons (32x32). Without icon.png Azure Pipelines shows a generic gear.
+  if [[ -f "extension/tasks/$TASK/icon.png" ]]; then
+    cp "extension/tasks/$TASK/icon.png" "$STAGE/tasks/$TASK/icon.png"
+  else
+    echo "ERROR: missing task icon: extension/tasks/$TASK/icon.png" >&2
+    exit 1
+  fi
+
   if [[ "$TASK" == "TogglyCLI" ]]; then
     cp "extension/tasks/$TASK/toggly_action.py" "$STAGE/tasks/$TASK/"
     cp "extension/tasks/$TASK/toggly_action.py.sha256" "$STAGE/tasks/$TASK/"

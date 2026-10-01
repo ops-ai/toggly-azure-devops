@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "toggly-feature-flags",
   "name": "Toggly Feature Flags",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "publisher": "toggly",
   "description": "Feature flags and progressive delivery for Azure Pipelines — typed tasks, service connection, and a CLI escape hatch",
   "categories": ["Azure Pipelines"],
@@ -76,6 +76,7 @@
       "properties": {
         "name": "toggly",
         "displayName": "Toggly Feature Flags",
+        "description": "Connect Azure Pipelines to the Toggly management API with OAuth2 client credentials.",
         "icon": "images/extension-icon.png",
         "url": {
           "displayName": "Toggly API URL",
@@ -83,14 +84,30 @@
           "helpText": "Base URL for the Toggly API. Default: https://app.toggly.io/api",
           "isVisible": "true"
         },
+        "inputDescriptors": [
+          {
+            "id": "authority",
+            "name": "Authority URL",
+            "description": "OAuth2 authority for client-credentials token requests. Default: https://auth.toggly.io",
+            "inputMode": "textbox",
+            "isConfidential": false,
+            "validation": {
+              "isRequired": false,
+              "dataType": "string"
+            },
+            "values": {
+              "defaultValue": "https://auth.toggly.io"
+            }
+          }
+        ],
         "authenticationSchemes": [
           {
-            "type": "ms.vss-endpoint.endpoint-auth-scheme-none",
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
             "inputDescriptors": [
               {
-                "id": "clientId",
+                "id": "username",
                 "name": "Client ID",
-                "description": "OAuth2 Client ID for Toggly authentication",
+                "description": "OAuth2 Client ID from Toggly Team Settings → API Credentials",
                 "inputMode": "textbox",
                 "isConfidential": false,
                 "validation": {
@@ -99,34 +116,20 @@
                 }
               },
               {
-                "id": "clientSecret",
+                "id": "password",
                 "name": "Client Secret",
-                "description": "OAuth2 Client Secret for Toggly authentication",
+                "description": "OAuth2 Client Secret from Toggly Team Settings → API Credentials",
                 "inputMode": "passwordbox",
                 "isConfidential": true,
                 "validation": {
                   "isRequired": true,
                   "dataType": "string"
                 }
-              },
-              {
-                "id": "authority",
-                "name": "Authority URL",
-                "description": "OAuth2 Authority URL. Default: https://auth.toggly.io",
-                "inputMode": "textbox",
-                "isConfidential": false,
-                "validation": {
-                  "isRequired": false,
-                  "dataType": "string"
-                },
-                "values": {
-                  "defaultValue": "https://auth.toggly.io"
-                }
               }
             ]
           }
         ],
-        "helpMarkDown": "Configure a connection to Toggly Feature Flags service. You'll need OAuth2 credentials (Client ID and Client Secret) from your Toggly account."
+        "helpMarkDown": "Create OAuth2 client credentials in [Toggly](https://app.toggly.io) under Team Settings → API Credentials. Use Client ID and Client Secret here. Docs: [Azure DevOps integration](https://docs.toggly.io/integrations/azure-devops)."
       }
     },
     {

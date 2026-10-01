@@ -6,12 +6,15 @@
   "description": "Install a pinned Toggly CLI release and run caller-supplied arguments",
   "helpMarkDown": "Downloads a pinned `cli-v*` binary, verifies SHA256SUMS, and runs your arguments. Do not put secrets in `args`. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
   "category": "Utility",
-  "visibility": ["Build", "Release"],
+  "visibility": [
+    "Build",
+    "Release"
+  ],
   "author": "Toggly",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "instanceNameFormat": "Toggly CLI $(version)",
   "inputs": [
@@ -27,7 +30,7 @@
       "type": "multiLine",
       "label": "CLI arguments",
       "required": true,
-      "helpMarkDown": "Arguments passed to toggly-cli. Quote like a shell. Do not put secrets here — use Client ID / Client Secret inputs instead.",
+      "helpMarkDown": "Arguments passed to toggly-cli. Quote like a shell. Do not put secrets here \u2014 use Client ID / Client Secret inputs instead.",
       "properties": {
         "resizable": true,
         "rows": "6"

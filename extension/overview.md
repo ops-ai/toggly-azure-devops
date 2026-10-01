@@ -23,7 +23,7 @@ This extension connects Azure Pipelines to [Toggly](https://toggly.io) so you ca
 ## Quick start
 
 1. Install this extension in your Azure DevOps organization.
-2. Create a **Toggly Feature Flags** service connection (Client ID + Client Secret from [app.toggly.io](https://app.toggly.io)).
+2. Project Settings → Service connections → **New service connection** → **Toggly Feature Flags**. Enter Client ID and Client Secret from [app.toggly.io](https://app.toggly.io) (Team Settings → API Credentials).
 3. Add a task to your pipeline, for example activate a release:
 
 ```yaml

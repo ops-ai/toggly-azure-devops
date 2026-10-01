@@ -6,12 +6,15 @@
   "description": "Rollback a Toggly release to restore previous feature flag states",
   "helpMarkDown": "Rolls back a release, restoring all feature flags to their previous state. Typically used in failure scenarios. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
   "category": "Deploy",
-  "visibility": ["Build", "Release"],
+  "visibility": [
+    "Build",
+    "Release"
+  ],
   "author": "Toggly",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "instanceNameFormat": "Rollback Toggly Release",
   "inputs": [
@@ -51,4 +54,3 @@
     }
   }
 }
-

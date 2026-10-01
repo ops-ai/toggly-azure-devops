@@ -6,12 +6,15 @@
   "description": "Create a new Toggly release with release notes and feature changes",
   "helpMarkDown": "Creates a new release in Toggly. The release can include feature flag changes and release notes. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
   "category": "Deploy",
-  "visibility": ["Build", "Release"],
+  "visibility": [
+    "Build",
+    "Release"
+  ],
   "author": "Toggly",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "instanceNameFormat": "Create Toggly Release: $(releaseName)",
   "inputs": [
@@ -66,4 +69,3 @@
     }
   }
 }
-

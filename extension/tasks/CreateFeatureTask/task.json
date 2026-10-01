@@ -6,12 +6,15 @@
   "description": "Create a new feature flag in Toggly",
   "helpMarkDown": "Creates a new feature flag with specified configuration. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
   "category": "Utility",
-  "visibility": ["Build", "Release"],
+  "visibility": [
+    "Build",
+    "Release"
+  ],
   "author": "Toggly",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "instanceNameFormat": "Create Feature: $(featureKey)",
   "inputs": [
@@ -75,4 +78,3 @@
     }
   }
 }
-

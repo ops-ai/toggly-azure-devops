@@ -2,23 +2,40 @@ import * as tl from 'azure-pipelines-task-lib/task';
 import { TogglyConfig } from './types';
 
 /**
- * Gets Toggly configuration from Azure DevOps Service Connection
+ * Gets Toggly configuration from an Azure DevOps service connection.
+ *
+ * The endpoint type uses Basic auth with labels Client ID / Client Secret
+ * (parameters username / password). Optional Authority is an endpoint data field.
  */
 export function getTogglyConfig(serviceConnectionName: string): TogglyConfig {
-  const endpointAuth = tl.getEndpointAuthorization(serviceConnectionName, false);
   const endpointUrl = tl.getEndpointUrl(serviceConnectionName, false);
 
-  if (!endpointAuth) {
-    throw new Error(`Service connection '${serviceConnectionName}' not found or not authorized`);
+  // Prefer authorization parameters (Basic scheme stores Client ID/Secret here).
+  const clientId =
+    tl.getEndpointAuthorizationParameter(serviceConnectionName, 'username', true) ||
+    tl.getEndpointAuthorizationParameter(serviceConnectionName, 'clientId', true) ||
+    '';
+  const clientSecret =
+    tl.getEndpointAuthorizationParameter(serviceConnectionName, 'password', true) ||
+    tl.getEndpointAuthorizationParameter(serviceConnectionName, 'clientSecret', true) ||
+    '';
+
+  let authority = 'https://auth.toggly.io';
+  try {
+    authority =
+      tl.getEndpointDataParameter(serviceConnectionName, 'authority', true) ||
+      tl.getEndpointAuthorizationParameter(serviceConnectionName, 'authority', true) ||
+      authority;
+  } catch {
+    // Optional field — keep default when the connection has no data block.
   }
 
-  const clientId = endpointAuth.parameters['clientId'];
-  const clientSecret = endpointAuth.parameters['clientSecret'];
-  const authority = endpointAuth.parameters['authority'] || 'https://auth.toggly.io';
   const baseUrl = endpointUrl || 'https://app.toggly.io/api';
 
   if (!clientId || !clientSecret) {
-    throw new Error('Service connection is missing required OAuth2 credentials (Client ID and Client Secret)');
+    throw new Error(
+      'Service connection is missing required OAuth2 credentials (Client ID and Client Secret)'
+    );
   }
 
   return {
@@ -46,4 +63,3 @@ export function validateServiceConnection(config: TogglyConfig): void {
     throw new Error('Authority URL is not configured');
   }
 }
-

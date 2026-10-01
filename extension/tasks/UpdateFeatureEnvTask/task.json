@@ -6,12 +6,15 @@
   "description": "Enable, disable, or configure a feature flag on a specific environment",
   "helpMarkDown": "Updates feature flag configuration for a specific environment. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
   "category": "Deploy",
-  "visibility": ["Build", "Release"],
+  "visibility": [
+    "Build",
+    "Release"
+  ],
   "author": "Toggly",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "instanceNameFormat": "Update Feature $(featureKey) on $(environment)",
   "inputs": [
@@ -86,4 +89,3 @@
     }
   }
 }
-

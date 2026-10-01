@@ -6,12 +6,15 @@
   "description": "Associate the current Azure DevOps build with a Toggly release",
   "helpMarkDown": "Associates the current build with a Toggly release. Can create a new release or find an existing draft release. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
   "category": "Deploy",
-  "visibility": ["Build", "Release"],
+  "visibility": [
+    "Build",
+    "Release"
+  ],
   "author": "Toggly",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "instanceNameFormat": "Associate Build with Toggly Release",
   "inputs": [
@@ -82,4 +85,3 @@
     }
   }
 }
-

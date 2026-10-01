@@ -6,12 +6,15 @@
   "description": "Update an existing feature flag in Toggly",
   "helpMarkDown": "Updates metadata for an existing feature flag. [Learn more](https://docs.toggly.io/integrations/azure-devops)",
   "category": "Utility",
-  "visibility": ["Build", "Release"],
+  "visibility": [
+    "Build",
+    "Release"
+  ],
   "author": "Toggly",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 0
+    "Patch": 1
   },
   "instanceNameFormat": "Update Feature: $(featureKey)",
   "inputs": [
@@ -75,4 +78,3 @@
     }
   }
 }
-
