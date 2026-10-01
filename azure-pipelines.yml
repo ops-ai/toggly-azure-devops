@@ -95,10 +95,14 @@ stages:
               npm install -g tfx-cli@0.22.6
               VSIX=$(ls "$(Pipeline.Workspace)/extension"/*.vsix | head -n 1)
               echo "Publishing privately: $VSIX → org ${DevOpsOrganization}"
+              # Marketplace validation can take longer than tfx's wait window; the
+              # upload/share already succeeded. Do not fail the job on that wait.
               tfx extension publish \
                 --vsix "$VSIX" \
                 --share-with "${DevOpsOrganization}" \
+                --no-wait-validation \
                 --token "${AzureDevOpsMarketplacePAT}"
+              echo "Published. Validation continues asynchronously on the Marketplace."
             displayName: 'tfx extension publish --share-with'
             env:
               AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)
@@ -131,7 +135,9 @@ stages:
               echo "Publishing publicly: $VSIX"
               tfx extension publish \
                 --vsix "$VSIX" \
+                --no-wait-validation \
                 --token "${AzureDevOpsMarketplacePAT}"
+              echo "Published. Validation continues asynchronously on the Marketplace."
             displayName: 'tfx extension publish (public)'
             env:
               AzureDevOpsMarketplacePAT: $(AzureDevOpsMarketplacePAT)
