@@ -2,9 +2,9 @@
   "manifestVersion": 1,
   "id": "toggly-feature-flags",
   "name": "Toggly Feature Flags",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "publisher": "toggly",
-  "description": "Manage Toggly feature flags and releases from Azure DevOps pipelines with typed tasks and an optional CLI escape hatch",
+  "description": "Feature flags and progressive delivery for Azure Pipelines — typed tasks, service connection, and a CLI escape hatch",
   "categories": ["Azure Pipelines"],
   "targets": [
     {
@@ -28,6 +28,14 @@
       "path": "overview.md"
     }
   },
+  "screenshots": [
+    {
+      "path": "images/screenshots/typed-tasks.png"
+    },
+    {
+      "path": "images/screenshots/cli-escape-hatch.png"
+    }
+  ],
   "links": {
     "getstarted": {
       "uri": "https://docs.toggly.io/integrations/azure-devops"
@@ -37,13 +45,21 @@
     },
     "support": {
       "uri": "https://toggly.io/support"
+    },
+    "repository": {
+      "uri": "https://github.com/ops-ai/toggly-azure-devops"
     }
   },
   "repository": {
     "type": "git",
-    "uri": "https://github.com/ops-ai/Toggly.FeatureManagement"
+    "uri": "https://github.com/ops-ai/toggly-azure-devops"
   },
   "badges": [
+    {
+      "href": "https://docs.toggly.io/integrations/azure-devops",
+      "uri": "https://img.shields.io/badge/docs-Azure%20DevOps-556EE6",
+      "description": "Toggly Azure DevOps docs"
+    },
     {
       "href": "https://toggly.io",
       "uri": "https://img.shields.io/badge/Toggly-Feature%20Flags-blue",

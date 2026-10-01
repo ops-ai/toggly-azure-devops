@@ -1,20 +1,30 @@
 # Toggly Feature Flags for Azure DevOps
 
-Manage feature flags and releases from Azure Pipelines with typed tasks (service connection, output variables, build summary, gate polling, and rollback) plus an optional `TogglyCLI@1` escape hatch for pinned CLI commands.
+Ship feature changes with the same pipeline that ships your code.
 
-## Typed pipeline tasks
+This extension connects Azure Pipelines to [Toggly](https://toggly.io) so you can create flags, track releases, activate with quality gates, and roll back from YAML — using a Toggly service connection.
 
-| Task | Purpose |
-| --- | --- |
-| `TogglyCreateRelease@1` | Create a release |
-| `TogglyAssociateBuild@1` | Associate the current build with a release |
-| `TogglyCreateFeature@1` | Create a feature flag |
-| `TogglyUpdateFeature@1` | Update feature metadata |
-| `TogglyUpdateFeatureEnv@1` | Enable, disable, or configure filters per environment |
-| `TogglyActivateRelease@1` | Activate a release (requires `environment`) |
-| `TogglyRollbackRelease@1` | Roll back a release (requires `environment`) |
+**Docs:** [Azure DevOps integration](https://docs.toggly.io/integrations/azure-devops) · **Site:** [toggly.io](https://toggly.io)
 
-Configure a **Toggly Feature Flags** service connection (OAuth2 client credentials). Default API URL: `https://app.toggly.io/api`.
+---
+
+## What you get
+
+- **Seven typed tasks** for the common flag and release workflows
+- **Toggly service connection** (OAuth2 client credentials)
+- **Output variables** such as `Toggly.ReleaseId` for later steps
+- **Build summary** markdown so release context shows on the run
+- **`TogglyCLI@1`** escape hatch when you need a pinned CLI command
+
+![Typed pipeline tasks](images/screenshots/typed-tasks.png)
+
+---
+
+## Quick start
+
+1. Install this extension in your Azure DevOps organization.
+2. Create a **Toggly Feature Flags** service connection (Client ID + Client Secret from [app.toggly.io](https://app.toggly.io)).
+3. Add a task to your pipeline, for example activate a release:
 
 ```yaml
 - task: TogglyActivateRelease@1
@@ -24,26 +34,40 @@ Configure a **Toggly Feature Flags** service connection (OAuth2 client credentia
     environment: 'Production'
 ```
 
-See [Azure DevOps Integration](https://docs.toggly.io/integrations/azure-devops) for full examples.
+Activate and rollback **require** `environment` (sent as the API query parameter).
 
-## Task: TogglyCLI@1
+---
 
-Use the CLI task when you need a pinned `toggly-cli` binary for commands outside the typed tasks.
+## Typed pipeline tasks
+
+| Task | What it does |
+| --- | --- |
+| `TogglyCreateRelease@1` | Create a release |
+| `TogglyAssociateBuild@1` | Link the current build to a release |
+| `TogglyCreateFeature@1` | Create a feature flag |
+| `TogglyUpdateFeature@1` | Update feature metadata |
+| `TogglyUpdateFeatureEnv@1` | Enable, disable, or set filters per environment |
+| `TogglyActivateRelease@1` | Activate a release (optional gate wait) |
+| `TogglyRollbackRelease@1` | Roll back a release |
+
+Default API base: `https://app.toggly.io/api` (calls use `api/v2`).
+
+---
+
+## TogglyCLI@1 (escape hatch)
+
+Use when you need a pinned [`toggly-cli`](https://docs.toggly.io/sdks/cli) binary for commands outside the typed tasks.
+
+![CLI escape hatch](images/screenshots/cli-escape-hatch.png)
 
 | Input | Required | Notes |
 | --- | --- | --- |
-| `version` | yes | Exact `MAJOR.MINOR.PATCH` (for example `0.2.1`). Do not use `latest`. |
+| `version` | yes | Exact `MAJOR.MINOR.PATCH` (for example `0.2.1`). Never `latest`. |
 | `args` | yes | Quote-aware CLI arguments. **Do not put secrets here.** |
-| `clientId` | yes | OAuth2 client ID |
-| `clientSecret` | yes | OAuth2 client secret (use a secret pipeline variable) |
-| `baseUrl` | no | Optional `TOGGLY_BASE_URL` override |
-| `authority` | no | Optional `TOGGLY_AUTHORITY` override |
+| `clientId` / `clientSecret` | yes | Mapped to `TOGGLY_CLIENT_*` for the CLI |
+| `baseUrl` / `authority` | no | Optional overrides |
 
 Agents need Python 3 (`python3` or `python`) on `PATH`.
-
-## Secrets
-
-Store credentials as secret pipeline variables and pass them into service connections or CLI task inputs. Never put client secrets in `args`.
 
 ```yaml
 - task: TogglyCLI@1
@@ -63,6 +87,16 @@ Store credentials as secret pipeline variables and pass them into service connec
       --build-number $(Build.BuildNumber)
 ```
 
-## Documentation
+---
 
-Full guide: [docs.toggly.io/integrations/azure-devops](https://docs.toggly.io/integrations/azure-devops)
+## Secrets
+
+Use secret pipeline variables and the service connection (or CLI task inputs). Never put client secrets in `args` or commit them to YAML.
+
+---
+
+## Learn more
+
+- Full guide: [docs.toggly.io/integrations/azure-devops](https://docs.toggly.io/integrations/azure-devops)
+- Source: [ops-ai/toggly-azure-devops](https://github.com/ops-ai/toggly-azure-devops)
+- Support: [toggly.io/support](https://toggly.io/support)

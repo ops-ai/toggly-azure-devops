@@ -56,7 +56,19 @@ done < <(find extension/tasks -mindepth 2 -maxdepth 2 -name task.json | sort)
 
 cp "extension/overview.md" "$STAGE/overview.md"
 cp "extension/vss-extension.json" "$STAGE/vss-extension.json"
-cp "extension/images/extension-icon.png" "$STAGE/images/"
+# Icon + gallery screenshots (Marketplace needs these addressable under images/)
+rm -rf "$STAGE/images"
+cp -R "extension/images" "$STAGE/images"
+# Do not ship placeholders or base64 sidecars
+find "$STAGE/images" -type f \( -name '*.placeholder' -o -name '*.b64' \) -delete
+if [[ ! -f "$STAGE/images/extension-icon.png" ]]; then
+  echo "ERROR: extension-icon.png missing from staged images" >&2
+  exit 1
+fi
+if [[ ! -f "$STAGE/images/screenshots/typed-tasks.png" ]] || [[ ! -f "$STAGE/images/screenshots/cli-escape-hatch.png" ]]; then
+  echo "ERROR: marketplace screenshots missing from staged images" >&2
+  exit 1
+fi
 
 # Guard: stage must contain all seven historical tasks and TogglyCLI
 MISSING=0
@@ -82,6 +94,7 @@ if ! grep -q 'toggly-service-endpoint' "$STAGE/vss-extension.json"; then
 fi
 
 mkdir -p output
+rm -f output/*.vsix
 
 echo ""
 echo "Creating VSIX package..."
@@ -99,7 +112,7 @@ fi
   "$TFX" extension create --manifest-globs vss-extension.json --output-path ../output
 )
 
-VSIX_FILE=$(ls output/*.vsix | head -n 1)
+VSIX_FILE=$(ls -t output/*.vsix | head -n 1)
 
 echo ""
 echo "✓ Extension packaged successfully!"
