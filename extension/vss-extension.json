@@ -2,8 +2,9 @@
   "manifestVersion": 1,
   "id": "toggly-feature-flags",
   "name": "Toggly Feature Flags",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "publisher": "toggly",
+  "public": true,
   "description": "Feature flags and progressive delivery for Azure Pipelines \u2014 typed tasks, service connection, and a CLI escape hatch",
   "categories": [
     "Azure Pipelines"

@@ -11,7 +11,7 @@ parameters:
     type: boolean
     default: true
   - name: publishPublic
-    displayName: 'Publish publicly to the Marketplace'
+    displayName: 'Publish publicly (required for service connections; needs public:true in manifest)'
     type: boolean
     default: false
 
