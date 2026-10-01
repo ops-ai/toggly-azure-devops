@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
-  "id": "e5f6a7b8-5678-9abc-def0-123456789012",
+  "id": "9d2f4b68-1a7c-4e35-b8d0-3c6a5e1f9b74",
   "name": "TogglyUpdateFeatureEnv",
   "friendlyName": "Toggly - Update Feature Environment",
   "description": "Enable, disable, or configure a feature flag on a specific environment",
@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 3
   },
   "instanceNameFormat": "Update Feature $(featureKey) on $(environment)",
   "inputs": [

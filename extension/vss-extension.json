@@ -2,10 +2,12 @@
   "manifestVersion": 1,
   "id": "toggly-feature-flags",
   "name": "Toggly Feature Flags",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "publisher": "toggly",
-  "description": "Feature flags and progressive delivery for Azure Pipelines — typed tasks, service connection, and a CLI escape hatch",
-  "categories": ["Azure Pipelines"],
+  "description": "Feature flags and progressive delivery for Azure Pipelines \u2014 typed tasks, service connection, and a CLI escape hatch",
+  "categories": [
+    "Azure Pipelines"
+  ],
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
@@ -117,7 +119,9 @@
     {
       "id": "toggly-create-release-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/CreateReleaseTask"
       }
@@ -125,7 +129,9 @@
     {
       "id": "toggly-associate-build-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/AssociateBuildTask"
       }
@@ -133,7 +139,9 @@
     {
       "id": "toggly-create-feature-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/CreateFeatureTask"
       }
@@ -141,7 +149,9 @@
     {
       "id": "toggly-update-feature-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/UpdateFeatureTask"
       }
@@ -149,7 +159,9 @@
     {
       "id": "toggly-update-feature-env-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/UpdateFeatureEnvTask"
       }
@@ -157,7 +169,9 @@
     {
       "id": "toggly-activate-release-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/ActivateReleaseTask"
       }
@@ -165,7 +179,9 @@
     {
       "id": "toggly-rollback-release-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/RollbackReleaseTask"
       }
@@ -173,7 +189,9 @@
     {
       "id": "toggly-cli-task",
       "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
       "properties": {
         "name": "tasks/TogglyCLI"
       }

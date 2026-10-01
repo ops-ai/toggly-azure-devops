@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
-  "id": "a1b2c3d4-1234-5678-9abc-def012345678",
+  "id": "7f3c2a91-4d5e-4b8a-9c1f-6e2d8a0b3c45",
   "name": "TogglyCreateRelease",
   "friendlyName": "Toggly - Create Release",
   "description": "Create a new Toggly release with release notes and feature changes",
@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 3
   },
   "instanceNameFormat": "Create Toggly Release: $(releaseName)",
   "inputs": [

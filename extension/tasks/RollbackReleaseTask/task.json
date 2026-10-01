@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
-  "id": "a7b8c9d0-789a-bcde-f012-345678901234",
+  "id": "1c6b9e42-5d8a-4f13-a7e2-0b4d8c3f6a95",
   "name": "TogglyRollbackRelease",
   "friendlyName": "Toggly - Rollback Release",
   "description": "Rollback a Toggly release to restore previous feature flag states",
@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 3
   },
   "instanceNameFormat": "Rollback Toggly Release",
   "inputs": [

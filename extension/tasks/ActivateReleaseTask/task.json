@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
-  "id": "f6a7b8c9-6789-abcd-ef01-234567890123",
+  "id": "4e8a1c56-2f9b-4d70-9e3a-7b1c5d0f8a26",
   "name": "TogglyActivateRelease",
   "friendlyName": "Toggly - Activate Release",
   "description": "Activate a Toggly release and optionally wait for gates to pass",
@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 3
   },
   "instanceNameFormat": "Activate Toggly Release",
   "inputs": [
