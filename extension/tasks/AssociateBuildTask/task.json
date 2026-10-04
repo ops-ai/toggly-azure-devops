@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 3
+    "Patch": 4
   },
   "instanceNameFormat": "Associate Build with Toggly Release",
   "inputs": [
@@ -26,29 +26,34 @@
       "helpMarkDown": "Select a Toggly service connection"
     },
     {
+      "name": "teamId",
+      "type": "pickList",
+      "label": "Workspace",
+      "required": false,
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "helpMarkDown": "Select a workspace after choosing a service connection, or type the workspace ID if the list is empty."
+    },
+    {
       "name": "projectKey",
-      "type": "string",
+      "type": "pickList",
       "label": "Project Key / Application ID",
       "required": true,
-      "helpMarkDown": "The Toggly application ID or project key"
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "helpMarkDown": "The Toggly application. Select from the list or type the application ID."
     },
     {
       "name": "environment",
       "type": "pickList",
       "label": "Environment",
       "required": true,
-      "defaultValue": "Production",
-      "options": {
-        "Development": "Development",
-        "Staging": "Staging",
-        "Production": "Production",
-        "QA": "QA",
-        "UAT": "UAT"
-      },
       "properties": {
         "EditableOptions": "True"
       },
-      "helpMarkDown": "Target environment for the release"
+      "helpMarkDown": "Target environment. Select from the list after choosing an application, or type the environment name."
     },
     {
       "name": "mode",
@@ -77,6 +82,29 @@
       "required": false,
       "defaultValue": "Release ${branch} - ${buildNumber}",
       "helpMarkDown": "Pattern for release name. Supports: ${branch}, ${buildNumber}, ${commitSha}"
+    }
+  ],
+  "dataSourceBindings": [
+    {
+      "target": "teamId",
+      "endpointId": "$(connectedService)",
+      "dataSourceName": "TogglyWorkspaces"
+    },
+    {
+      "target": "projectKey",
+      "endpointId": "$(connectedService)",
+      "dataSourceName": "TogglyApplications",
+      "parameters": {
+        "teamId": "$(teamId)"
+      }
+    },
+    {
+      "target": "environment",
+      "endpointId": "$(connectedService)",
+      "dataSourceName": "TogglyEnvironments",
+      "parameters": {
+        "applicationId": "$(projectKey)"
+      }
     }
   ],
   "execution": {

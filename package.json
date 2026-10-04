@@ -1,6 +1,6 @@
 {
   "name": "toggly-azure-devops-extension",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "Azure DevOps extension for Toggly feature flags, releases, and CLI",
   "main": "index.js",
   "scripts": {
