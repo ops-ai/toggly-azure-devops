@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 3
+    "Patch": 5
   },
   "instanceNameFormat": "Associate Build with Toggly Release",
   "inputs": [
@@ -34,21 +34,10 @@
     },
     {
       "name": "environment",
-      "type": "pickList",
+      "type": "string",
       "label": "Environment",
       "required": true,
-      "defaultValue": "Production",
-      "options": {
-        "Development": "Development",
-        "Staging": "Staging",
-        "Production": "Production",
-        "QA": "QA",
-        "UAT": "UAT"
-      },
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "Target environment for the release"
+      "helpMarkDown": "Target environment for the release (for example Production or Staging)"
     },
     {
       "name": "mode",
