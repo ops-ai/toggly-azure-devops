@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "toggly-feature-flags",
   "name": "Toggly Feature Flags",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "publisher": "toggly",
   "public": true,
   "description": "Feature flags and progressive delivery for Azure Pipelines \u2014 typed tasks, service connection, and a CLI escape hatch",
@@ -112,31 +112,6 @@
                 }
               }
             ]
-          }
-        ],
-        "dataSources": [
-          {
-            "name": "TestConnection",
-            "endpointUrl": "{{endpoint.url}}/v2/integrations/azure-devops/workspaces",
-            "resultSelector": "jsonpath:$[*].id"
-          },
-          {
-            "name": "TogglyWorkspaces",
-            "endpointUrl": "{{endpoint.url}}/v2/integrations/azure-devops/workspaces",
-            "resultSelector": "jsonpath:$[*]",
-            "resultTemplate": "{\"Value\":\"{{{id}}}\",\"DisplayValue\":\"{{{name}}}\"}"
-          },
-          {
-            "name": "TogglyApplications",
-            "endpointUrl": "{{endpoint.url}}/v2/integrations/azure-devops/applications?teamId={{teamId}}",
-            "resultSelector": "jsonpath:$[*]",
-            "resultTemplate": "{\"Value\":\"{{{id}}}\",\"DisplayValue\":\"{{{name}}}\"}"
-          },
-          {
-            "name": "TogglyEnvironments",
-            "endpointUrl": "{{endpoint.url}}/v2/integrations/azure-devops/applications/{{applicationId}}/environments",
-            "resultSelector": "jsonpath:$[*]",
-            "resultTemplate": "{\"Value\":\"{{{name}}}\",\"DisplayValue\":\"{{{name}}}\"}"
           }
         ],
         "helpMarkDown": "<a href=\"https://docs.toggly.io/integrations/azure-devops\" target=\"_blank\"><b>Learn more</b></a>"

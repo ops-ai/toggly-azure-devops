@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 4
+    "Patch": 5
   },
   "instanceNameFormat": "Activate Toggly Release",
   "inputs": [
@@ -26,26 +26,6 @@
       "helpMarkDown": "Select a Toggly service connection"
     },
     {
-      "name": "teamId",
-      "type": "pickList",
-      "label": "Workspace",
-      "required": false,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "Select a workspace after choosing a service connection, or type the workspace ID if the list is empty."
-    },
-    {
-      "name": "applicationId",
-      "type": "pickList",
-      "label": "Application",
-      "required": false,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "Used to list environments for this task. Not sent to the activate API. Select from the list or type the application ID."
-    },
-    {
       "name": "releaseId",
       "type": "string",
       "label": "Release ID",
@@ -55,13 +35,10 @@
     },
     {
       "name": "environment",
-      "type": "pickList",
+      "type": "string",
       "label": "Environment",
       "required": true,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "Target environment to activate. Select from the list after choosing an application, or type the environment name."
+      "helpMarkDown": "Target environment to activate (for example Production or Staging). Sent as the environment query parameter."
     },
     {
       "name": "waitForGates",
@@ -88,29 +65,6 @@
       "defaultValue": "10",
       "visibleRule": "waitForGates = true",
       "helpMarkDown": "Time between gate status checks (default: 10 seconds)"
-    }
-  ],
-  "dataSourceBindings": [
-    {
-      "target": "teamId",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyWorkspaces"
-    },
-    {
-      "target": "applicationId",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyApplications",
-      "parameters": {
-        "teamId": "$(teamId)"
-      }
-    },
-    {
-      "target": "environment",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyEnvironments",
-      "parameters": {
-        "applicationId": "$(applicationId)"
-      }
     }
   ],
   "execution": {

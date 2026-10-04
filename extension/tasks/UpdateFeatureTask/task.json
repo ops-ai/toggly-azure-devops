@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 4
+    "Patch": 5
   },
   "instanceNameFormat": "Update Feature: $(featureKey)",
   "inputs": [
@@ -26,24 +26,11 @@
       "helpMarkDown": "Select a Toggly service connection"
     },
     {
-      "name": "teamId",
-      "type": "pickList",
-      "label": "Workspace",
-      "required": false,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "Select a workspace after choosing a service connection, or type the workspace ID if the list is empty."
-    },
-    {
       "name": "applicationId",
-      "type": "pickList",
-      "label": "Application",
+      "type": "string",
+      "label": "Application ID",
       "required": true,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "The Toggly application. Select from the list or type the application ID."
+      "helpMarkDown": "The Toggly application ID"
     },
     {
       "name": "featureKey",
@@ -83,21 +70,6 @@
       "label": "Tags",
       "required": false,
       "helpMarkDown": "New comma-separated list of tags (leave empty to keep current)"
-    }
-  ],
-  "dataSourceBindings": [
-    {
-      "target": "teamId",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyWorkspaces"
-    },
-    {
-      "target": "applicationId",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyApplications",
-      "parameters": {
-        "teamId": "$(teamId)"
-      }
     }
   ],
   "execution": {

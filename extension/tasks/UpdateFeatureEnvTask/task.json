@@ -14,7 +14,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 4
+    "Patch": 5
   },
   "instanceNameFormat": "Update Feature $(featureKey) on $(environment)",
   "inputs": [
@@ -26,34 +26,18 @@
       "helpMarkDown": "Select a Toggly service connection"
     },
     {
-      "name": "teamId",
-      "type": "pickList",
-      "label": "Workspace",
-      "required": false,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "Select a workspace after choosing a service connection, or type the workspace ID if the list is empty."
-    },
-    {
       "name": "applicationId",
-      "type": "pickList",
-      "label": "Application",
+      "type": "string",
+      "label": "Application ID",
       "required": true,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "The Toggly application. Select from the list or type the application ID."
+      "helpMarkDown": "The Toggly application ID"
     },
     {
       "name": "environment",
-      "type": "pickList",
+      "type": "string",
       "label": "Environment",
       "required": true,
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "helpMarkDown": "Target environment. Select from the list after choosing an application, or type the environment name."
+      "helpMarkDown": "Target environment (for example Production or Staging)"
     },
     {
       "name": "featureKey",
@@ -85,29 +69,6 @@
       "properties": {
         "resizable": true,
         "rows": "6"
-      }
-    }
-  ],
-  "dataSourceBindings": [
-    {
-      "target": "teamId",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyWorkspaces"
-    },
-    {
-      "target": "applicationId",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyApplications",
-      "parameters": {
-        "teamId": "$(teamId)"
-      }
-    },
-    {
-      "target": "environment",
-      "endpointId": "$(connectedService)",
-      "dataSourceName": "TogglyEnvironments",
-      "parameters": {
-        "applicationId": "$(applicationId)"
       }
     }
   ],
